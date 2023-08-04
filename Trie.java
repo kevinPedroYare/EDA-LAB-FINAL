@@ -24,4 +24,19 @@ public class Trie {
         }
         return current.isEndOfWord();
     }
+
+    public int size(){
+        return size(root);
+    }
+
+    private int size(TrieNode node){
+        int count = 0;
+        if(node.isEndOfWord()){
+            count++;
+        }
+        for (TrieNode child : node.getChildren().values()) {
+            count += size(child);
+        }
+        return count;
+    }
 }
