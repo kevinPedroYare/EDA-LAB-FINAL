@@ -29,22 +29,30 @@ public class PlagiarismChekerGUI extends JFrame{
 
     public PlagiarismChekerGUI() {
 
-        plagiarismCheker = new PlagiarismCheker();
-        listModel = new DefaultListModel<>();
-        fileList = new JList<>(listModel);
-        JScrollPane fileListScrollPane = new JScrollPane(fileList);
+    	plagiarismCheker = new PlagiarismCheker(); // Instancia del detector de plagio
+    	listModel = new DefaultListModel<>(); // Modelo de datos para la lista de archivos
+    	fileList = new JList<>(listModel); // Lista de archivos que se muestra en la GUI
+    	JScrollPane fileListScrollPane = new JScrollPane(fileList); // Panel con barra de desplazamiento para la lista
 
-        selectFilesButton = new JButton("Cargar archivos (base de datos)");
-        
-        selectFilesButton.addActionListener((ActionListener) new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setMultiSelectionEnabled(true);
-                //falta
-            }
-        });
-        
+    	selectFilesButton = new JButton("Cargar archivos (base de datos)");
+
+    	selectFilesButton.addActionListener(new ActionListener() {
+    	    @Override
+    	    public void actionPerformed(ActionEvent e) {
+    	        JFileChooser fileChooser = new JFileChooser();
+    	        fileChooser.setMultiSelectionEnabled(true);
+    	        int result = fileChooser.showOpenDialog(PlagiarismChekerGUI.this);
+    	        if (result == JFileChooser.APPROVE_OPTION) {
+    	            File[] selectedFiles = fileChooser.getSelectedFiles();
+    	            String[] filePaths = new String[selectedFiles.length];
+    	            for (int i = 0; i < selectedFiles.length; i++) {
+    	                filePaths[i] = selectedFiles[i].getAbsolutePath();
+    	                listModel.addElement(filePaths[i]); // Agregar la ruta del archivo al DefaultListModel
+    	            }
+    	            plagiarismCheker.loadFiles(filePaths); // Cargar los archivos seleccionados en el detector de plagio
+    	        }
+    	    }
+    	});
 
         loadParagraphButton = new JButton("Cargar texto para verificar plagio");
         loadParagraphButton.addActionListener(new ActionListener() {
