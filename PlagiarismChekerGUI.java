@@ -2,7 +2,11 @@ import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -58,9 +62,16 @@ public class PlagiarismChekerGUI extends JFrame {
         loadParagraphButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Obtener el texto ingresado por el usuario en el JTextArea paragraphTextArea
-                String paragraph = paragraphTextArea.getText();
-                resultTextArea.setText(paragraph);
+                JFileChooser fileChooser = new JFileChooser();
+                int result = fileChooser.showOpenDialog(PlagiarismChekerGUI.this);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    String filePath = selectedFile.getAbsolutePath();
+                    
+                    // Leer el contenido del archivo seleccionado
+                    String paragraph = readFile(filePath);
+                    paragraphTextArea.setText(paragraph); // Establecer el contenido en el JTextArea
+                }
             }
         });
 
@@ -98,7 +109,7 @@ public class PlagiarismChekerGUI extends JFrame {
                 }
             }
         });
-
+        
         // JTextArea para el párrafo a verificar
         paragraphTextArea = new JTextArea(10, 30);
         JScrollPane paragraphScrollPane = new JScrollPane(paragraphTextArea);
@@ -152,7 +163,21 @@ public class PlagiarismChekerGUI extends JFrame {
         // ya que ya lo habías hecho previamente. Puedes eliminar esta línea.
         // resultTable = new JTable(tableModel);
     }
-
+    private String readFile(String filePath) {
+    try {
+        StringBuilder content = new StringBuilder();
+        BufferedReader reader = new BufferedReader(new FileReader(filePath));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            content.append(line).append("\n");
+        }
+        reader.close();
+        return content.toString();
+    } catch (IOException e) {
+        e.printStackTrace();
+        return ""; // Si hay un error al leer el archivo, devuelve una cadena vacía
+    }
+}
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
